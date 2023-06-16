@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 
+    sbdemo-apserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sbdemo-apserver
+  template:
+    metadata:
+      labels:
+        app: sbdemo-apserver
+    spec:
+      containers:
+      - name: apserver
+        image: public.ecr.aws/w5y4d1l0/zamawaheed:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: "prd"
+          - name: DB_URL
+            value: "jdbc:postgresql://sbdemo-postgres-service:5432/demodb?user=postgres&password=admin123"
+          - name: PIC_DIR
+            value: "/opt/picDir"
+          - name: REDIS_HOST
+            value: "sbdemo-redis-service"
+          - name: REDIS_PORT
+            value: "6379"     
+        volumeMounts:
+          - mountPath: "/opt/picDir"
+            name: apserver-pvc
+      volumes:
+      - name: apserver-pvc
+        persistentVolumeClaim:
+          claimName: waheed
+      tolerations:
+      - key: "key1"
+        operator: "Equal"
+        value: "value1"
+        effect: "NoSchedule"

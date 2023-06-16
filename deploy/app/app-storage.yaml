@@ -1,0 +1,30 @@
+kind: PersistentVolume  # Create a PV
+apiVersion: v1
+metadata:
+  name: sdbemo-apserver1-pv    # Sets PV's name
+  labels:
+    type: local   # Sets PV's type to local
+    name: sdbemo-apserver1-pv
+spec:
+  storageClassName: waheed
+  capacity:
+    storage:  3Gi  # Sets PV Volume
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/opt/picDir"  # Sets the volume's path
+---
+kind: PersistentVolumeClaim  # Create PVC
+apiVersion: v1
+metadata:
+  name: sdbemo-apserver1-pvc  # Sets name of PV
+  labels:
+    name: sdbemo-apserver1-pvc
+spec:
+  storageClassName: waheed
+  accessModes:
+    - ReadWriteMany  # Sets read and write access
+  resources:
+    requests:
+      storage:  3Gi   # Sets volume size
+

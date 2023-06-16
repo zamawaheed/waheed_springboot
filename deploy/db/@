@@ -1,0 +1,73 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+    tier: database
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector: # mysql Pod Should contain same labels
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels: # Must match 'Service' and 'Deployment' selectors
+        app: postgres
+        tier: database
+    spec:
+      volumes:
+      - name: postgres-persistance-storage
+    # This AWS EBS volume must already exist.
+        awsElasticBlockStore:
+           volumeID: "vol-0e42065ff2163b340"
+           fsType: ext4
+      containers:
+        - name: postgres
+          image: postgres
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: postgres_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: postgres_password
+            - name: POSTGRES_DB # Setting Database Name from a 'ConfigMap'
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-conf
+                  key: name
+          ports:
+            - containerPort: 5432
+              name: postgres
+          volumeMounts:
+            - name: postgres-persistance-storage
+              mountPath: /var/lib/postgresql/data
+      tolerations:
+      - key: "key1"
+        operator: "Equal"
+        value: "value1"
+        effect: "NoSchedule"
+  volumeClaimTemplates:
+  - metadata:
+     name: postgres-pv-claim  # Sets name of PV
+     labels:
+       app: postgres
+    spec:
+      storageClassName: manual
+      accessModes:
+        - ReadWriteMany  # Sets read and write access
+      resources:
+        requests:
+          storage:  1Gi
+
+
+
+

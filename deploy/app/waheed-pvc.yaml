@@ -1,0 +1,14 @@
+kind: PersistentVolumeClaim  # Create PVC
+apiVersion: v1
+metadata:
+  name: waheed  # Sets name of PV
+  labels:
+    name: waheed
+spec:
+  storageClassName: waheed
+  accessModes:
+    - ReadWriteMany  # Sets read and write access
+  resources:
+    requests:
+      storage:  3Gi   # Sets volume size
+

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sbdemo-nfs-pvc
+spec:
+  storageClassName: standard
+  selector:
+    matchLabels:
+      role: nfs-pv
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

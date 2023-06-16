@@ -1,0 +1,15 @@
+kind: PersistentVolume  # Create a PV
+apiVersion: v1
+metadata:
+  name: waheed    # Sets PV's name
+  labels:
+    type: local   # Sets PV's type to local
+    name: waheed
+spec:
+  storageClassName: waheed
+  capacity:
+    storage:  3Gi  # Sets PV Volume
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/opt/picDir"  # Sets the volume's path
